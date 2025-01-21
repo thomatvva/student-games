@@ -6,8 +6,6 @@ import pygame
 # Initialize pygame
 pygame.init()
 
-os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'
-
 # For macOS, we need to handle the Python environment
 if sys.platform == "darwin":  # This checks if we're on macOS
     os.environ['SDL_VIDEODRIVER'] = 'cocoa'
@@ -70,7 +68,7 @@ clock = pygame.time.Clock()
 # Function to add a new plank
 def add_plank():
     x_pos = random.randint(0, WIDTH - plank_width)
-    y_pos = random.randint(water_level - 150, water_level - 50)
+    y_pos = random.randint(int(water_level) - 150, int(water_level) - 50)
     plank_type = random.choice(['stable', 'unstable'])
     planks.append({'x': x_pos, 'y': y_pos, 'type': plank_type, 'time_on': 0})
     
@@ -82,7 +80,7 @@ def update_planks():
             planks.remove(plank)
             
 def start_screen():
-    clock = pygame.time.Clock()  # Add this line
+    clock = pygame.time.Clock()
     screen.fill(BLACK)
     font = pygame.font.SysFont(None, 60)
     title_text = font.render("Floating Plank Survival", True, WHITE)
@@ -93,7 +91,7 @@ def start_screen():
 
     waiting = True
     while waiting:
-        clock.tick(60)  # Add this line
+        clock.tick(60)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -154,7 +152,7 @@ def game_loop():
             is_jumping = True  # Player is falling if not on a plank or the ground
             
         # Check for game over
-        if y + block_height >= water_level:
+        if y + block_height >= int(water_level):
             running = False  # Player fell into the water
             
         # Move water level
@@ -168,10 +166,10 @@ def game_loop():
         # Draw planks
         for plank in planks:
             color = BROWN if plank['type'] == 'unstable' else GREEN
-            pygame.draw.rect(screen, color, (plank['x'], plank['y'], plank_width, plank_height))
+            pygame.draw.rect(screen, color, (int(plank['x']), int(plank['y']), plank_width, plank_height))
             
         # Draw player
-        pygame.draw.rect(screen, RED, (x, y, block_width, block_height))
+        pygame.draw.rect(screen, RED, (int(x), int(y), block_width, block_height))
         
         # Display score
         score += 1
@@ -193,8 +191,11 @@ def game_loop():
 
 def main():
     try:
+        print("Starting game...")
         start_screen()
+        print("Start screen completed")
         game_loop()
+        print("Game loop completed")
     except Exception as e:
         print(f"Error occurred: {e}")
     finally:
